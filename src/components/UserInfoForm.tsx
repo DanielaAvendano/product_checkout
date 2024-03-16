@@ -45,7 +45,7 @@ export const UserInfoForm = (props: UserInfoProps) => {
             id="full_name"
             name="full_name"
             label="Full Name"
-            error={errors.full_name}
+            error={!!errors.full_name}
           />
           <ErrorMessage name="full_name">
             {(msg) => <FormHelperText error>{msg}</FormHelperText>}
@@ -57,7 +57,7 @@ export const UserInfoForm = (props: UserInfoProps) => {
             id="email"
             name="email"
             label="Email Address"
-            error={errors.email}
+            error={!!errors.email}
           />
           <ErrorMessage name="email">
             {(msg) => <FormHelperText error>{msg}</FormHelperText>}
