@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
-import { theme } from "./index";
+import { theme } from "./";
 
 export const AppTheme = ({ children }: { children: ReactNode }) => {
   return (
