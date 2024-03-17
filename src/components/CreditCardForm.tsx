@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as yup from "yup";
 
 import { UserDataProps } from "../interfaces";
@@ -24,19 +24,22 @@ interface CreditCardFormProps {
   data: UserDataProps;
 }
 
+interface CreditCardInputProps {
+  placeholder: string;
+  name: string;
+}
+
 const idTypes: string[] = ["CC", "TI", "Passport"];
 
 const numberOfPayments: number[] = Array.from(
   { length: 72 },
   (_, index) => index + 1
 );
-const CreditCardFormValidationSchema = yup.object({
+const CreditCardFormValidationSchema = yup.object().shape({
   credit_card_number: yup
     .string()
-    .matches(/^[0-9\s]*$/, "Wront format, numbers only")
-    .required("Can´t be blank")
-    .min(19, "Min. 16 characters")
-    .max(19, "Max. 16 characters"),
+    .matches(/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/, "Invalid credit card number")
+    .required("Credit card number is required"),
   card_holder_name: yup.string().required("Can´t be blank"),
   month: yup
     .string()
@@ -59,6 +62,42 @@ const CreditCardFormValidationSchema = yup.object({
   accept_terms_and_conditions: yup.bool().required("Please accept"),
 });
 
+interface CreditCardInputProps {
+  placeholder: string;
+  name: string;
+}
+
+const CreditCardInput: React.FC<CreditCardInputProps> = ({
+  placeholder,
+  name,
+}) => {
+  const [field, meta, helpers] = useField({ name });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    const newValue = value.replace(/\D/g, "");
+
+    const formattedValue = newValue.replace(/(\d{4})(?=\d)/g, "$1 ");
+
+    helpers.setValue(formattedValue);
+  };
+
+  return (
+    <Field
+      {...field}
+      as={TextField}
+      fullWidth
+      margin="dense"
+      placeholder={placeholder}
+      inputMode="numeric"
+      onChange={handleChange}
+      error={meta.touched && !!meta.error}
+      helperText={meta.touched && meta.error ? meta.error : ""}
+    />
+  );
+};
+
 export const CreditCardForm = (props: CreditCardFormProps) => {
   const { prev, next, data } = props;
 
@@ -80,19 +119,11 @@ export const CreditCardForm = (props: CreditCardFormProps) => {
         {({ values }) => (
           <Form>
             <FormHelperText>Credit card number</FormHelperText>
-            <Field
-              as={TextField}
-              fullWidth
-              margin="dense"
-              id="credit_card_number"
-              inputMode="numeric"
+
+            <CreditCardInput
               name="credit_card_number"
-              maxLength={19}
               placeholder="e.g. 1234 5678 9123 0000"
             />
-            <ErrorMessage name="credit_card_number">
-              {(msg) => <FormHelperText error>{msg}</FormHelperText>}
-            </ErrorMessage>
 
             <Grid container spacing={1}>
               <Grid item xs={4}>
