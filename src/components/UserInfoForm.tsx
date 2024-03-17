@@ -1,4 +1,4 @@
-import { Button, FormHelperText, TextField } from "@mui/material";
+import { Button, FormHelperText, Stack, TextField } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 
@@ -9,21 +9,18 @@ interface UserInfoProps {
   next: (newData: UserDataProps) => void;
   data: UserDataProps;
   setData: React.Dispatch<React.SetStateAction<UserDataProps>>;
+  handleClose: () => void;
 }
 
 const UserInfoValidationSchema = yup.object({
-  full_name: yup
-    .string()
-    .min(7, "Mininum name characters are 7")
-    .required("Full name is required"),
-  email: yup
-    .string()
-    .email("Enter a valid email")
-    .required("Email is required"),
+  full_name: yup.string().min(7, "Mininum name characters are 7"),
+  // .required("Full name is required"),
+  email: yup.string().email("Enter a valid email"),
+  // .required("Email is required"),
 });
 
 export const UserInfoForm = (props: UserInfoProps) => {
-  const { next, data } = props;
+  const { next, data, handleClose } = props;
 
   const handleSubmit = (values: UserDataProps) => {
     next(values);
@@ -65,9 +62,14 @@ export const UserInfoForm = (props: UserInfoProps) => {
 
           <PhoneInputField />
 
-          <Button type="submit" variant="contained">
-            Next
-          </Button>
+          <Stack direction="row" justifyContent={"space-between"} marginY={2}>
+            <Button type="button" variant="outlined" onClick={handleClose}>
+              Close
+            </Button>
+            <Button type="submit" variant="contained">
+              Next
+            </Button>
+          </Stack>
         </Form>
       )}
     </Formik>

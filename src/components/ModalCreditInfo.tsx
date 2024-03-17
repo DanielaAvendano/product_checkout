@@ -1,10 +1,9 @@
 import { useState } from "react";
 import {
-  Button,
+  // Button,
   Dialog,
-  DialogActions,
+  // DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Step,
   StepLabel,
@@ -26,6 +25,17 @@ export interface UserDataProps {
     countryCode: string;
     number: string;
   };
+  credit_card_number: string;
+  card_holder_name: string;
+  month: string;
+  year: string;
+  cvc: string;
+  user_id: {
+    id_type: string;
+    id_number: string;
+  };
+  number_of_payments: number;
+  accept_terms_and_conditions: boolean;
 }
 
 const steps = ["Personal Information", "Credit card Info"];
@@ -37,6 +47,14 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
     full_name: "",
     email: "",
     phone_number: { countryCode: "CO", number: "" },
+    credit_card_number: "",
+    card_holder_name: "",
+    month: "",
+    year: "",
+    cvc: "",
+    user_id: { id_type: "CC", id_number: "" },
+    number_of_payments: 1,
+    accept_terms_and_conditions: false,
   });
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -66,7 +84,12 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
     switch (step) {
       case 0:
         return (
-          <UserInfoForm next={handleNextStep} data={data} setData={setData} />
+          <UserInfoForm
+            next={handleNextStep}
+            handleClose={handleClose}
+            data={data}
+            setData={setData}
+          />
         );
       case 1:
         return (
@@ -92,13 +115,10 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
           </Step>
         ))}
       </Stepper>
-      <DialogContentText marginLeft={3} marginTop={5}>
-        Please enter your personal data in this form.
-      </DialogContentText>
       <DialogContent>{formContent(currentStep)}</DialogContent>
-      <DialogActions>
+      {/* <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-      </DialogActions>
+      </DialogActions> */}
     </Dialog>
   );
 };

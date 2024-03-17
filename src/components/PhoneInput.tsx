@@ -13,6 +13,7 @@ const PhoneInputField = () => {
   return (
     <Field
       as={TextField}
+      type="tel"
       name="phone_number.number"
       fullWidth
       margin="dense"
