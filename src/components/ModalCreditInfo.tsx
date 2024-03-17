@@ -12,36 +12,24 @@ import {
 
 import { UserInfoForm } from "./UserInfoForm";
 import { CreditCardForm } from "./CreditCardForm";
+import { UserDataProps } from "../interfaces";
+import { useSelector } from "react-redux";
+import { selectPayment } from "../store/slices/payment";
 
 interface ModalCreditInfoProps {
   open: boolean;
   selectedValue: string;
   onClose: (value: string) => void;
 }
-export interface UserDataProps {
-  full_name: string;
-  email: string;
-  phone_number: {
-    countryCode: string;
-    number: string;
-  };
-  credit_card_number: string;
-  card_holder_name: string;
-  month: string;
-  year: string;
-  cvc: string;
-  user_id: {
-    id_type: string;
-    id_number: string;
-  };
-  number_of_payments: number;
-  accept_terms_and_conditions: boolean;
-}
 
-const steps = ["Personal Information", "Credit card Info"];
+const steps = ["Personal Info", "Credit card Info"];
 
 export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
   const { onClose, selectedValue, open } = props;
+
+  const paymentData = useSelector(selectPayment);
+
+  console.log("paymentData", paymentData);
 
   const [data, setData] = useState<UserDataProps>({
     full_name: "",
@@ -99,8 +87,8 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
             data={data}
           />
         );
-      default:
-        return <div>404: Not Found</div>;
+      // default:
+      //   return <div>404: Not Found</div>;
     }
   };
 

@@ -1,9 +1,11 @@
 import { Button, FormHelperText, Stack, TextField } from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
+import { useDispatch } from "react-redux";
 
-import { UserDataProps } from "./ModalCreditInfo";
 import PhoneInputField from "./PhoneInput";
+import { UserDataProps } from "../interfaces";
+import { updateUserData } from "../store/slices/payment";
 
 interface UserInfoProps {
   next: (newData: UserDataProps) => void;
@@ -22,9 +24,12 @@ const UserInfoValidationSchema = yup.object({
 export const UserInfoForm = (props: UserInfoProps) => {
   const { next, data, handleClose } = props;
 
+  const dispatch = useDispatch();
+
   const handleSubmit = (values: UserDataProps) => {
     next(values);
     console.log("values", values);
+    dispatch(updateUserData(values));
   };
 
   return (

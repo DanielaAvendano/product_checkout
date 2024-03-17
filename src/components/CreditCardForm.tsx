@@ -14,7 +14,9 @@ import {
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 
-import { UserDataProps } from "./ModalCreditInfo";
+import { UserDataProps } from "../interfaces";
+import { updateUserData } from "../store/slices/payment";
+import { useDispatch } from "react-redux";
 
 interface CreditCardFormProps {
   prev: (newData: UserDataProps) => void;
@@ -60,8 +62,11 @@ const CreditCardFormValidationSchema = yup.object({
 export const CreditCardForm = (props: CreditCardFormProps) => {
   const { prev, next, data } = props;
 
+  const dispatch = useDispatch();
+
   const handleSubmit = (values: UserDataProps) => {
     next(values, true);
+    dispatch(updateUserData(values));
     console.log("values", values);
   };
   return (
@@ -234,7 +239,7 @@ export const CreditCardForm = (props: CreditCardFormProps) => {
               type="checkbox"
               as={FormControlLabel}
               control={<Checkbox />}
-              label="I accept I have read terms and conditions terms and conditions"
+              label="I accept I have read terms and conditions."
               id="accept_terms_and_conditions"
               name="accept_terms_and_conditions"
             />
