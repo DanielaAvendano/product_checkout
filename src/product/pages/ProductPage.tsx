@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -15,14 +15,11 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import { MainLayout } from "../../layout/MainLayout";
 import { ModalCreditInfo } from "../../components/ModalCreditInfo";
-import { UserDataProps } from "../../interfaces";
+
 import { products } from "../../api/products";
 
-import { updateUserData } from "../../store/slices/payment";
+import { selectPayment, updateUserData } from "../../store/slices/payment";
 
-interface ProductPageProps {
-  data: UserDataProps;
-}
 const emails = ["username@gmail.com", "user02@gmail.com"];
 
 const productQuantity: number[] = Array.from(
@@ -30,14 +27,14 @@ const productQuantity: number[] = Array.from(
   (_, index) => index + 1
 );
 
-export const ProductPage = ({ data }: ProductPageProps) => {
+export const ProductPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const paymentData = useSelector(selectPayment);
 
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(emails[1]);
   const [productName, setProductName] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [productPrice, setProductPrice] = useState(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(products[0].product_price);
@@ -62,7 +59,7 @@ export const ProductPage = ({ data }: ProductPageProps) => {
     setOpen(true);
     dispatch(
       updateUserData({
-        ...data,
+        ...paymentData,
         product_name: productName,
         product_price: totalPrice,
         product_quantity: selectedQuantity,
@@ -77,6 +74,8 @@ export const ProductPage = ({ data }: ProductPageProps) => {
     setProductName(product_name);
     setProductPrice(product_price);
   }, []);
+
+  console.log(productPrice);
 
   return (
     <MainLayout>
