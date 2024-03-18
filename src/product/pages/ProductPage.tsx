@@ -85,7 +85,7 @@ export const ProductPage = () => {
             <Box
               component="img"
               alt="The best maple syrup"
-              src="../src/assets/product_1.jpeg"
+              src="https://harwoodgold.com/maple-products/wp-content/uploads/2016/09/syrup_leaf-250ml.jpg"
               style={{ maxWidth: "100%", height: "auto" }}
             />
           </Grid>
