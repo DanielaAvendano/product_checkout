@@ -14,7 +14,7 @@ const initialState: PaymentState = {
     product_quantity: 1,
     full_name: "",
     email: "",
-    phone_number: { countryCode: "CO", number: "000000" },
+    phone_number: { countryCode: "CO", number: "" },
     credit_card_number: "",
     card_holder_name: "",
     month: "",
@@ -31,8 +31,7 @@ export const paymentSlice = createSlice({
   initialState,
   reducers: {
     updateUserData: (state, action: PayloadAction<UserDataProps>) => {
-      console.log(action.payload);
-      state.data = action.payload;
+      state.data = { ...state.data, ...action.payload };
     },
     resetPaymentData: (state) => {
       state.data = { ...initialState.data }; 

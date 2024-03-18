@@ -37,13 +37,10 @@ export const ProductPage = ({ data }: ProductPageProps) => {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(emails[1]);
   const [productName, setProductName] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [productPrice, setProductPrice] = useState(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(products[0].product_price);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleClose = (value: string) => {
     setOpen(false);
@@ -61,6 +58,18 @@ export const ProductPage = ({ data }: ProductPageProps) => {
     setTotalPrice(quantity * products[0].product_price);
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+    dispatch(
+      updateUserData({
+        ...data,
+        product_name: productName,
+        product_price: totalPrice,
+        product_quantity: selectedQuantity,
+      })
+    );
+  };
+
   useEffect(() => {
     // Fetch product info
     const product_name = products[0].product_name;
@@ -68,16 +77,6 @@ export const ProductPage = ({ data }: ProductPageProps) => {
     setProductName(product_name);
     setProductPrice(product_price);
   }, []);
-
-  useEffect(() => {
-    const updatedData = {
-      ...data,
-      product_name: productName,
-      product_price: totalPrice,
-      product_quantity: selectedQuantity,
-    };
-    dispatch(updateUserData(updatedData));
-  }, [productName, productPrice, dispatch, data, totalPrice, selectedQuantity]);
 
   return (
     <MainLayout>

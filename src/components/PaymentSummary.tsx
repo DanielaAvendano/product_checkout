@@ -56,6 +56,7 @@ export const PaymentSummary = ({
         console.log(payload);
         handleNavigate();
         dispatch(resetPaymentData());
+        localStorage.clear();
       })
       .catch((error) => {
         console.error("Error occurred:", error);

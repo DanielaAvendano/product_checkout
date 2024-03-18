@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import { UserInfoForm } from "./UserInfoForm";
 import { CreditCardForm } from "./CreditCardForm";
 import { UserDataProps } from "../interfaces";
 import { PaymentSummary } from "./PaymentSummary";
-import { selectPayment } from "../store/slices/payment";
+import { selectPayment, updateUserData } from "../store/slices/payment";
 
 interface ModalCreditInfoProps {
   open: boolean;
@@ -30,40 +30,36 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
     props;
 
   const paymentData = useSelector(selectPayment);
-  const { product_name, product_price, product_quantity } = paymentData;
+  const dispatch = useDispatch();
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [data, setData] = useState<UserDataProps>({
-    product_name: product_name,
-    product_price: product_price,
-    product_quantity: product_quantity,
-    full_name: "",
-    email: "",
-    phone_number: { countryCode: "CO", number: "" },
-    credit_card_number: "",
-    card_holder_name: "",
-    month: "",
-    year: "",
-    cvc: "",
-    user_id: { id_type: "CC", id_number: "" },
-    number_of_payments: 1,
-    accept_terms_and_conditions: false,
-  });
 
   const [currentStep, setCurrentStep] = useState(0);
   const handleClose = () => {
     onClose(selectedValue);
   };
 
-  // const makeRequest = (formData: UserDataProps) => {
-  //   console.log("form submitted", formData);
-  // };
+  useEffect(() => {
+    const savedData = localStorage.getItem("userData");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      dispatch(updateUserData(parsedData));
+    }
+  }, [dispatch]);
 
   const handleNextStep = (newData: UserDataProps, final = false) => {
-    setData((prev) => ({ ...prev, ...newData }));
+    const updatedData = {
+      ...paymentData,
+      ...newData,
+      product_name: paymentData.product_name,
+      product_price: paymentData.product_price,
+      product_quantity: paymentData.product_quantity,
+    };
+    dispatch(updateUserData(updatedData));
+
+    localStorage.setItem("userData", JSON.stringify(updatedData));
 
     if (final) {
-      // makeRequest(newData);
       onClose(selectedValue);
       setOpenBackdrop(true);
     } else if (currentStep + 1 < steps.length) {
@@ -71,8 +67,7 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
     }
   };
 
-  const handlePrevStep = (newData: UserDataProps) => {
-    setData((prev) => ({ ...prev, ...newData }));
+  const handlePrevStep = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
@@ -83,8 +78,7 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
           <UserInfoForm
             next={handleNextStep}
             handleClose={handleClose}
-            data={data}
-            setData={setData}
+            data={paymentData}
           />
         );
       case 1:
@@ -92,7 +86,7 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
           <CreditCardForm
             prev={handlePrevStep}
             next={handleNextStep}
-            data={data}
+            data={paymentData}
           />
         );
       default:

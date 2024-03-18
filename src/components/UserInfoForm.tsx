@@ -10,7 +10,7 @@ import { selectPayment, updateUserData } from "../store/slices/payment";
 interface UserInfoProps {
   next: (newData: UserDataProps) => void;
   data: UserDataProps;
-  setData: React.Dispatch<React.SetStateAction<UserDataProps>>;
+  //setData: React.Dispatch<React.SetStateAction<UserDataProps>>;
   handleClose: () => void;
 }
 
@@ -37,8 +37,8 @@ export const UserInfoForm = (props: UserInfoProps) => {
 
   const handleSubmit = (values: UserDataProps) => {
     next(values);
-    console.log("values", values);
-    dispatch(updateUserData({ ...paymentData, ...values }));
+    const updatedData = { ...paymentData, ...values };
+    dispatch(updateUserData(updatedData));
   };
 
   return (

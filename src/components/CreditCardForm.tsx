@@ -102,7 +102,8 @@ export const CreditCardForm = (props: CreditCardFormProps) => {
 
   const handleSubmit = (values: UserDataProps) => {
     next(values, true);
-    dispatch(updateUserData({ ...paymentData, ...values }));
+    const updatedData = { ...paymentData, ...values };
+    dispatch(updateUserData(updatedData));
   };
   return (
     <>
