@@ -15,8 +15,8 @@ import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as yup from "yup";
 
 import { UserDataProps } from "../interfaces";
-import { updateUserData } from "../store/slices/payment";
-import { useDispatch } from "react-redux";
+import { selectPayment, updateUserData } from "../store/slices/payment";
+import { useDispatch, useSelector } from "react-redux";
 
 interface CreditCardFormProps {
   prev: (newData: UserDataProps) => void;
@@ -40,7 +40,7 @@ const CreditCardFormValidationSchema = yup.object().shape({
     .string()
     .matches(/^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/, "Invalid credit card number")
     .required("Credit card number is required"),
-  card_holder_name: yup.string().required("Can´t be blank"),
+  card_holder_name: yup.string(),
   month: yup
     .string()
     .required("Can´t be blank")
@@ -58,8 +58,10 @@ const CreditCardFormValidationSchema = yup.object().shape({
     .required("Can´t be blank")
     .matches(/^[0-9]+$/, "Numbers only")
     .min(3, "Min. 3 characters"),
-  number_of_payments: yup.number().required("Can´t be blank"),
-  accept_terms_and_conditions: yup.bool().required("Please accept"),
+  number_of_payments: yup.number().required("Provide number of payments"),
+  accept_terms_and_conditions: yup
+    .bool()
+    .required("Accept terms and conditions"),
 });
 
 interface CreditCardInputProps {
@@ -67,19 +69,13 @@ interface CreditCardInputProps {
   name: string;
 }
 
-const CreditCardInput: React.FC<CreditCardInputProps> = ({
-  placeholder,
-  name,
-}) => {
+const CreditCardInput = ({ placeholder, name }: CreditCardInputProps) => {
   const [field, meta, helpers] = useField({ name });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-
     const newValue = value.replace(/\D/g, "");
-
     const formattedValue = newValue.replace(/(\d{4})(?=\d)/g, "$1 ");
-
     helpers.setValue(formattedValue);
   };
 
@@ -102,11 +98,11 @@ export const CreditCardForm = (props: CreditCardFormProps) => {
   const { prev, next, data } = props;
 
   const dispatch = useDispatch();
+  const paymentData = useSelector(selectPayment);
 
   const handleSubmit = (values: UserDataProps) => {
     next(values, true);
-    dispatch(updateUserData(values));
-    console.log("values", values);
+    dispatch(updateUserData({ ...paymentData, ...values }));
   };
   return (
     <>

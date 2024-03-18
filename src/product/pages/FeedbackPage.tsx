@@ -1,8 +1,8 @@
 import { Button, Grid, Typography } from "@mui/material";
-import { MainLayout } from "../layout/MainLayout";
+import { MainLayout } from "../../layout/MainLayout";
 import { useNavigate } from "react-router-dom";
 
-export const HomePage = () => {
+export const FeedbackPage = () => {
   const navigate = useNavigate();
   return (
     <MainLayout>
@@ -16,12 +16,12 @@ export const HomePage = () => {
       >
         <Grid item xs={3}>
           <Typography variant="h5" textAlign="center">
-            Home Page
+            Successful Transaction
           </Typography>
         </Grid>
         <Grid item xs={3} mt={3}>
-          <Button onClick={() => navigate("/product")} variant="contained">
-            Go to product
+          <Button variant="contained" onClick={() => navigate("/")}>
+            Continue shopping
           </Button>
         </Grid>
       </Grid>

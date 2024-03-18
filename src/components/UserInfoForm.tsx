@@ -1,11 +1,11 @@
 import { Button, FormHelperText, Stack, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
 
 import PhoneInputField from "./PhoneInput";
 import { UserDataProps } from "../interfaces";
-import { updateUserData } from "../store/slices/payment";
+import { selectPayment, updateUserData } from "../store/slices/payment";
 
 interface UserInfoProps {
   next: (newData: UserDataProps) => void;
@@ -15,21 +15,30 @@ interface UserInfoProps {
 }
 
 const UserInfoValidationSchema = yup.object({
-  full_name: yup.string().min(7, "Mininum name characters are 7"),
-  // .required("Full name is required"),
-  email: yup.string().email("Enter a valid email"),
-  // .required("Email is required"),
+  full_name: yup
+    .string()
+    .min(7, "Mininum name characters are 7")
+    .required("Full name is required"),
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  phone_number: yup.object().shape({
+    countryCode: yup.string().required("Country code is required"),
+    number: yup.string().required("Phone number is required"),
+  }),
 });
 
 export const UserInfoForm = (props: UserInfoProps) => {
   const { next, data, handleClose } = props;
 
   const dispatch = useDispatch();
+  const paymentData = useSelector(selectPayment);
 
   const handleSubmit = (values: UserDataProps) => {
     next(values);
     console.log("values", values);
-    dispatch(updateUserData(values));
+    dispatch(updateUserData({ ...paymentData, ...values }));
   };
 
   return (

@@ -1,8 +1,7 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
-  // Button,
   Dialog,
-  // DialogActions,
   DialogContent,
   DialogTitle,
   Step,
@@ -13,25 +12,31 @@ import {
 import { UserInfoForm } from "./UserInfoForm";
 import { CreditCardForm } from "./CreditCardForm";
 import { UserDataProps } from "../interfaces";
-import { useSelector } from "react-redux";
+import { PaymentSummary } from "./PaymentSummary";
 import { selectPayment } from "../store/slices/payment";
 
 interface ModalCreditInfoProps {
   open: boolean;
   selectedValue: string;
   onClose: (value: string) => void;
+  handleClickOpen: () => void;
+  handleNavigate: () => void;
 }
 
 const steps = ["Personal Info", "Credit card Info"];
 
 export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
-  const { onClose, selectedValue, open } = props;
+  const { onClose, selectedValue, open, handleClickOpen, handleNavigate } =
+    props;
 
   const paymentData = useSelector(selectPayment);
+  const { product_name, product_price, product_quantity } = paymentData;
 
-  console.log("paymentData", paymentData);
-
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const [data, setData] = useState<UserDataProps>({
+    product_name: product_name,
+    product_price: product_price,
+    product_quantity: product_quantity,
     full_name: "",
     email: "",
     phone_number: { countryCode: "CO", number: "" },
@@ -50,17 +55,20 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
     onClose(selectedValue);
   };
 
-  const makeRequest = (formData: UserDataProps) => {
-    console.log("form submitted", formData);
-  };
+  // const makeRequest = (formData: UserDataProps) => {
+  //   console.log("form submitted", formData);
+  // };
 
   const handleNextStep = (newData: UserDataProps, final = false) => {
     setData((prev) => ({ ...prev, ...newData }));
 
     if (final) {
-      makeRequest(newData);
+      // makeRequest(newData);
+      onClose(selectedValue);
+      setOpenBackdrop(true);
+    } else if (currentStep + 1 < steps.length) {
+      setCurrentStep((prev) => prev + 1);
     }
-    setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevStep = (newData: UserDataProps) => {
@@ -87,26 +95,32 @@ export const ModalCreditInfo = (props: ModalCreditInfoProps) => {
             data={data}
           />
         );
-      // default:
-      //   return <div>404: Not Found</div>;
+      default:
+        return <div>404: Not Found</div>;
     }
   };
 
   return (
-    <Dialog onClose={handleClose} open={open} fullWidth>
-      <DialogTitle>Fill out you data</DialogTitle>
+    <>
+      <Dialog onClose={handleClose} open={open} fullWidth>
+        <DialogTitle>Fill out you data</DialogTitle>
 
-      <Stepper activeStep={currentStep} alternativeLabel>
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <DialogContent>{formContent(currentStep)}</DialogContent>
-      {/* <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-      </DialogActions> */}
-    </Dialog>
+        <Stepper activeStep={currentStep} alternativeLabel>
+          {steps.map((label, index) => (
+            <Step key={index}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <DialogContent>{formContent(currentStep)}</DialogContent>
+      </Dialog>
+
+      <PaymentSummary
+        handleNavigate={handleNavigate}
+        setOpenBackdrop={setOpenBackdrop}
+        openBackdrop={openBackdrop}
+        handleClickOpen={handleClickOpen}
+      />
+    </>
   );
 };

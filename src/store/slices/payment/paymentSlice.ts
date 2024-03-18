@@ -3,17 +3,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
 import { UserDataProps } from '../../../interfaces';
 
-
-
 export interface PaymentState {
   data: UserDataProps;
 }
 
 const initialState: PaymentState = {
   data: {
+    product_name: "",
+    product_price: 0,
+    product_quantity: 1,
     full_name: "",
     email: "",
-    phone_number: { countryCode: "CO", number: "" },
+    phone_number: { countryCode: "CO", number: "000000" },
     credit_card_number: "",
     card_holder_name: "",
     month: "",
@@ -30,12 +31,16 @@ export const paymentSlice = createSlice({
   initialState,
   reducers: {
     updateUserData: (state, action: PayloadAction<UserDataProps>) => {
+      console.log(action.payload);
       state.data = action.payload;
+    },
+    resetPaymentData: (state) => {
+      state.data = { ...initialState.data }; 
     },
   },
 });
 
-export const { updateUserData } = paymentSlice.actions;
+export const { updateUserData, resetPaymentData } = paymentSlice.actions;
 
 export const selectPayment = (state: RootState) => state.payment.data;
 
